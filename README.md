@@ -1,11 +1,14 @@
 # PolyMC Portable
-![][release-badge]
+[![][release-badge]][download]\
+[![][polymc-badge]][PolyMC]
 
 - [Download]
 - [Help]
 - [PolyMC]
 
 [download]: https://github.com/FayneAldan/PolyMCPortable/releases/latest
-[release-badge]: https://img.shields.io/github/v/release/FayneAldan/PolyMCPortable?color=%2388b858&style=for-the-badge
 [help]: https://faynealdan.github.io/PolyMCPortable/PolyMCPortable/help.html
 [PolyMC]: https://polymc.org/
+
+[release-badge]: https://img.shields.io/github/v/release/FayneAldan/PolyMCPortable?label=PolyMC+Portable&style=for-the-badge
+[polymc-badge]: https://img.shields.io/github/v/release/PolyMC/PolyMC?label=PolyMC&style=for-the-badge
