@@ -1,5 +1,10 @@
+PortableApps.comInstaller
+PortableApps.comLauncher
+
 PolyMCPortable/App/PolyMC/*
-PolyMCPortable/Data/
+!PolyMCPortable/App/PolyMC/whatgoeshere.txt
+PolyMCPortable/Data
+
 *.paf.exe
 PolyMCPortable/PolyMCPortable.exe
 PolyMCPortable/App/AppInfo/pac_installer_log.ini
