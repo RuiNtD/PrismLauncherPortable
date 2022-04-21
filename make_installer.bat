@@ -1,4 +1,2 @@
 @echo off
-set dir=%CD%
-cd \PortableApps\PortableApps.comInstaller
-start PortableApps.comInstaller.exe %dir%\PolyMCPortable
+start PortableApps.comInstaller\PortableApps.comInstaller.exe %CD%\PolyMCPortable

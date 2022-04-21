@@ -1,4 +1,2 @@
 @echo off
-set dir=%CD%
-cd \PortableApps\PortableApps.comLauncher
-start PortableApps.comLauncherGenerator.exe %dir%\PolyMCPortable
+start PortableApps.comLauncher\PortableApps.comLauncherGenerator.exe %CD%\PolyMCPortable
