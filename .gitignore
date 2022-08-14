@@ -7,9 +7,7 @@ PolyMCPortable/Data
 
 *.paf.exe
 PolyMCPortable/PolyMCPortable.exe
+PolyMCPortable/PolyMCPortable.ini
 PolyMCPortable/App/AppInfo/pac_installer_log.ini
 
-PolyMCPortable/Other/Source/*.bmp
-PolyMCPortable/Other/Source/*.ico
-PolyMCPortable/Other/Source/*.nsi
-PolyMCPortable/Other/Source/**/*.nsh
+PolyMCPortable/Other/Source/PortableApps.comInstaller*
