@@ -3,6 +3,8 @@ PortableApps.comLauncher
 
 PolyMCPortable/App/PolyMC/*
 !PolyMCPortable/App/PolyMC/whatgoeshere.txt
+PolyMCPortable/App/Legacy/*
+!PolyMCPortable/App/Legacy/whatgoeshere.txt
 PolyMCPortable/Data
 
 *.paf.exe
