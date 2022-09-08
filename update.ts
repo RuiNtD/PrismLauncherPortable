@@ -71,4 +71,9 @@ if (updateAvailable || confirm("Create launcher and installer?")) {
 }
 console.log();
 
+console.log(
+  `- ${
+    updateAvailable ? "Update to" : "Still using"
+  } [PolyMC ${version}](https://github.com/PolyMC/PolyMC/releases/tag/${version})`
+);
 alert("Done!");
