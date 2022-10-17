@@ -1,14 +1,9 @@
 # PolyMC Portable
 
-[![][release-badge]][download]\
-[![][polymc-badge]][polymc]
+Due to some unforunate events, PolyMC is no longer safe to use
+and all downloads of PolyMC Portable have been pulled.\
+Please switch to a different launcher, such as GDLauncher,
+and consider checking out the new fork with all the previous devs:
 
-- [Download]
-- [Help]
-- [PolyMC]
-
-[download]: https://github.com/FayneAldan/PolyMCPortable/releases/latest
-[help]: https://faynealdan.github.io/PolyMCPortable/PolyMCPortable/help.html
-[polymc]: https://polymc.org/
-[release-badge]: https://img.shields.io/github/v/release/FayneAldan/PolyMCPortable?label=PolyMC+Portable&style=for-the-badge
-[polymc-badge]: https://img.shields.io/github/v/release/PolyMC/PolyMC?label=PolyMC&style=for-the-badge
+- [PlaceholderMC GitHub](https://github.com/PlaceholderMC/PlaceholderMC)
+- [PlaceholderMC Discord](https://discord.gg/PRWcT6B7aP)
