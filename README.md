@@ -1,9 +1,15 @@
 # PolyMC Portable
 
-Due to some unforunate events, PolyMC is no longer safe to use
+Due to some unforunate events, PolyMC is no longer considered safe to use
 and all downloads of PolyMC Portable have been pulled.
-Please switch to a different launcher, such as GDLauncher,
+Please switch to a different launcher, such as [GDLauncher] or [ATLauncher],
 and consider checking out the new fork with all the previous devs:
 
-- [PlaceholderMC GitHub](https://github.com/PlaceholderMC/PlaceholderMC)
-- [PlaceholderMC Discord](https://discord.gg/PRWcT6B7aP)
+- [Prism Launcher GitHub](https://github.com/PlaceholderMC/PrismLauncher)
+- [Prism Launcher Discord](https://discord.gg/prismlauncher)
+
+I do plan to rebrand and continue this repository once Prism Launcher
+has a stable version available for download.
+
+[GDLauncher]: https://gdevs.io/
+[ATLauncher]: https://atlauncher.com/
