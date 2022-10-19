@@ -3,8 +3,8 @@ PortableApps.comLauncher
 
 PrismLauncherPortable/App/PrismLauncher/*
 !PrismLauncherPortable/App/PrismLauncher/whatgoeshere.txt
-PrismLauncherPortable/App/Legacy/*
-!PrismLauncherPortable/App/Legacy/whatgoeshere.txt
+PrismLauncherPortable/App/PrismLauncherLegacy/*
+!PrismLauncherPortable/App/PrismLauncherLegacy/whatgoeshere.txt
 PrismLauncherPortable/Data
 
 *.paf.exe

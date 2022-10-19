@@ -40,7 +40,7 @@ if (updateAvailable || confirm("Redownload Prism Launcher?")) {
       `${urlBase}/PrismLauncher-Windows-${version}.zip`,
     ],
     [
-      "PrismLauncherPortable/App/Legacy",
+      "PrismLauncherPortable/App/PrismLauncherLegacy",
       `${urlBase}/PrismLauncher-Windows-Legacy-${version}.zip`,
     ],
   ]) {
