@@ -1,5 +1,5 @@
 @echo off
 echo Creating launcher...
-PortableApps.comLauncher\PortableApps.comLauncherGenerator.exe %CD%\PolyMCPortable
+PortableApps.comLauncher\PortableApps.comLauncherGenerator.exe %CD%\PrismLauncherPortable
 echo Creating installer...
-PortableApps.comInstaller\PortableApps.comInstaller.exe %CD%\PolyMCPortable
+PortableApps.comInstaller\PortableApps.comInstaller.exe %CD%\PrismLauncherPortable

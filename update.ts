@@ -8,13 +8,14 @@ import {
 import { emptyDir } from "https://deno.land/std@0.154.0/fs/mod.ts";
 
 const tags = await (
-  await fetch("https://api.github.com/repos/PolyMC/PolyMC/tags")
+  await fetch("https://api.github.com/repos/PrismLauncher/PrismLauncher/tags")
 ).json();
 const version = tags[0].name;
 
-const iniPath = "PolyMCPortable/App/AppInfo/appinfo.ini";
+const iniPath = "PrismLauncherPortable/App/AppInfo/appinfo.ini";
 const appinfo = ini.parse(await Deno.readTextFile(iniPath));
 
+const standardVersion = version.split(".").concat(0).slice(0, 3).join(".");
 const updateAvailable = appinfo.Version.DisplayVersion != version;
 const patchNum = updateAvailable
   ? 0
@@ -22,7 +23,7 @@ const patchNum = updateAvailable
       (appinfo.Version.PackageVersion as string).split(".").pop() as string
     ) + 1;
 appinfo.Version.DisplayVersion = version;
-appinfo.Version.PackageVersion = `${version}.${patchNum}`;
+appinfo.Version.PackageVersion = `${standardVersion}.${patchNum}`;
 console.log("New version:", appinfo.Version.PackageVersion);
 
 if (updateAvailable || confirm("Update appinfo.ini?")) {
@@ -31,13 +32,16 @@ if (updateAvailable || confirm("Update appinfo.ini?")) {
 }
 console.log();
 
-if (updateAvailable || confirm("Redownload PolyMC?")) {
-  const urlBase = `https://github.com/PolyMC/PolyMC/releases/download/${version}`;
+if (updateAvailable || confirm("Redownload Prism Launcher?")) {
+  const urlBase = `https://github.com/PrismLauncher/PrismLauncher/releases/download/${version}`;
   for (const [path, url] of [
-    ["PolyMCPortable/App/PolyMC", `${urlBase}/PolyMC-Windows-${version}.zip`],
     [
-      "PolyMCPortable/App/Legacy",
-      `${urlBase}/PolyMC-Windows-Legacy-${version}.zip`,
+      "PrismLauncherPortable/App/PrismLauncher",
+      `${urlBase}/PrismLauncher-Windows-${version}.zip`,
+    ],
+    [
+      "PrismLauncherPortable/App/Legacy",
+      `${urlBase}/PrismLauncher-Windows-Legacy-${version}.zip`,
     ],
   ]) {
     console.log("Downloading", basename(url));
@@ -47,7 +51,7 @@ if (updateAvailable || confirm("Redownload PolyMC?")) {
     await emptyDir(path);
     await Deno.writeTextFile(
       join(path, "whatgoeshere.txt"),
-      "This directory is where the polymc.exe would exist if we had one"
+      "This directory is where the PrismLauncher.exe would exist if we had one"
     );
 
     console.log("Extracting...");
@@ -74,6 +78,6 @@ console.log();
 console.log(
   `- ${
     updateAvailable ? "Update to" : "Still using"
-  } [PolyMC ${version}](https://github.com/PolyMC/PolyMC/releases/tag/${version})`
+  } [Prism Launcher ${version}](https://github.com/PrismLauncher/PrismLauncher/releases/tag/${version})`
 );
 alert("Done!");

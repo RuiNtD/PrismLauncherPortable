@@ -1,16 +1,14 @@
-# PolyMC Portable
+# Prism Launcher Portable
 
-Due to some unforunate events, PolyMC is no longer considered safe to use
-and all downloads of PolyMC Portable have been pulled.
-Please switch to a different launcher (such as [GDLauncher], [ATLauncher], or [MultiMC])
-and consider checking out the new fork with all the previous devs:
+[![][release-badge]][download]\
+[![][prism-badge]][prism launcher]
 
-- [Prism Launcher GitHub](https://github.com/PrismLauncher/PrismLauncher)
-- [Prism Launcher Discord](https://discord.gg/prismlauncher)
+- [Download]
+- [Help]
+- [Prism Launcher]
 
-I do plan to rename, rebrand, and continue this repository once
-Prism Launcher has a stable version available for download.
-
-[GDLauncher]: https://gdevs.io/
-[ATLauncher]: https://atlauncher.com/
-[MultiMC]: https://multimc.org/
+[download]: https://github.com/FayneAldan/PrismLauncherPortable/releases/latest
+[help]: https://faynealdan.github.io/PrismLauncherPortable/PrismLauncherPortable/help.html
+[prism launcher]: https://prismlauncher.org/
+[release-badge]: https://img.shields.io/github/v/release/FayneAldan/PrismLauncherPortable?label=Prism+Launcher+Portable&style=for-the-badge
+[prism-badge]: https://img.shields.io/github/v/release/PrismLauncher/PrismLauncher?label=Prism+Launcher&style=for-the-badge

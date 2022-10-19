@@ -1,15 +1,15 @@
 PortableApps.comInstaller
 PortableApps.comLauncher
 
-PolyMCPortable/App/PolyMC/*
-!PolyMCPortable/App/PolyMC/whatgoeshere.txt
-PolyMCPortable/App/Legacy/*
-!PolyMCPortable/App/Legacy/whatgoeshere.txt
-PolyMCPortable/Data
+PrismLauncherPortable/App/PrismLauncher/*
+!PrismLauncherPortable/App/PrismLauncher/whatgoeshere.txt
+PrismLauncherPortable/App/Legacy/*
+!PrismLauncherPortable/App/Legacy/whatgoeshere.txt
+PrismLauncherPortable/Data
 
 *.paf.exe
-PolyMCPortable/PolyMCPortable.exe
-PolyMCPortable/PolyMCPortable.ini
-PolyMCPortable/App/AppInfo/pac_installer_log.ini
+PrismLauncherPortable/PrismLauncherPortable.exe
+PrismLauncherPortable/PrismLauncherPortable.ini
+PrismLauncherPortable/App/AppInfo/pac_installer_log.ini
 
-PolyMCPortable/Other/Source/PortableApps.comInstaller*
+PrismLauncherPortable/Other/Source/PortableApps.comInstaller*
