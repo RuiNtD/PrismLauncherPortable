@@ -7,8 +7,8 @@
 
 # Migrating from PolyMC Portable
 
-Just copy or move your `Data` folder from `PolyMCPortable` to `PrismLauncherPortable`
-You will have to remove and re-add your Minecraft accounts before launching the game
+Just copy or move your `Data` folder from `PolyMCPortable` to `PrismLauncherPortable` \
+You may have to remove and re-add your accounts before you can launch the game
 
 [download]: https://github.com/FayneAldan/PrismLauncherPortable/releases/latest
 [help]: https://faynealdan.github.io/PrismLauncherPortable/PrismLauncherPortable/help.html
