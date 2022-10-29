@@ -51,7 +51,7 @@ if (updateAvailable || confirm("Redownload Prism Launcher?")) {
     await emptyDir(path);
     await Deno.writeTextFile(
       join(path, "whatgoeshere.txt"),
-      "This directory is where the PrismLauncher.exe would exist if we had one"
+      "This directory is where the PrismLauncher.exe would exist if we had one\n"
     );
 
     console.log("Extracting...");
