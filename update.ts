@@ -37,11 +37,11 @@ if (updateAvailable || confirm("Redownload Prism Launcher?")) {
   for (const [path, url] of [
     [
       "PrismLauncherPortable/App/PrismLauncher",
-      `${urlBase}/PrismLauncher-Windows-${version}.zip`,
+      `${urlBase}/PrismLauncher-Windows-MSVC-${version}.zip`,
     ],
     [
       "PrismLauncherPortable/App/PrismLauncherLegacy",
-      `${urlBase}/PrismLauncher-Windows-Legacy-${version}.zip`,
+      `${urlBase}/PrismLauncher-Windows-MSVC-Legacy-${version}.zip`,
     ],
   ]) {
     console.log("Downloading", basename(url));
