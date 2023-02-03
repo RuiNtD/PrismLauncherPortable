@@ -1,28 +1,47 @@
-import * as ini from "https://esm.sh/ini@3.0.1";
-import { join, basename } from "https://deno.land/std@0.154.0/path/mod.ts";
-import {
-  ZipReader,
-  HttpReader,
-  Uint8ArrayWriter,
-} from "https://deno.land/x/zipjs@v2.6.21/index.js";
-import { emptyDir } from "https://deno.land/std@0.154.0/fs/mod.ts";
+import { z } from "zod";
 
-const tags = await (
-  await fetch("https://api.github.com/repos/PrismLauncher/PrismLauncher/tags")
-).json();
-const version = tags[0].name;
+import { join } from "std/path/mod.ts";
+import { emptyDir } from "std/fs/mod.ts";
 
-const iniPath = "PrismLauncherPortable/App/AppInfo/appinfo.ini";
-const appinfo = ini.parse(await Deno.readTextFile(iniPath));
+import * as ini from "ini";
+import { ZipReader, HttpReader, Uint8ArrayWriter } from "zipjs";
 
-const standardVersion = version.split(".").concat(0).slice(0, 3).join(".");
-const updateAvailable = appinfo.Version.DisplayVersion != version;
+const GitHubTag = z.object({
+  name: z.string(),
+});
+const GitHubTags = GitHubTag.array();
+
+const AppInfoIni = z.object({
+  Version: z.object({
+    PackageVersion: z.string(),
+    DisplayVersion: z.string(),
+  }),
+});
+type AppInfoIni = z.infer<typeof AppInfoIni>;
+
+const latestVersion = GitHubTags.parse(
+  await (
+    await fetch("https://api.github.com/repos/PrismLauncher/PrismLauncher/tags")
+  ).json()
+)[0].name;
+
+const appPath = join("PrismLauncherPortable", "App");
+const iniPath = join(appPath, "AppInfo", "appinfo.ini");
+const appinfo = <AppInfoIni>ini.parse(await Deno.readTextFile(iniPath));
+AppInfoIni.parse(appinfo);
+
+const standardVersion = latestVersion
+  .split(".")
+  .concat("0")
+  .slice(0, 3)
+  .join(".");
+const updateAvailable = appinfo.Version.DisplayVersion != latestVersion;
 const patchNum = updateAvailable
   ? 0
   : parseInt(
       (appinfo.Version.PackageVersion as string).split(".").pop() as string
     ) + 1;
-appinfo.Version.DisplayVersion = version;
+appinfo.Version.DisplayVersion = latestVersion;
 appinfo.Version.PackageVersion = `${standardVersion}.${patchNum}`;
 console.log("New version:", appinfo.Version.PackageVersion);
 
@@ -32,29 +51,44 @@ if (updateAvailable || confirm("Update appinfo.ini?")) {
 }
 console.log();
 
+type Download = {
+  dir: string;
+  filename: string;
+};
+
+const urlBase = `https://github.com/PrismLauncher/PrismLauncher/releases/download/${latestVersion}`;
+const downloads: Download[] = [
+  {
+    dir: "PrismLauncher",
+    filename: `PrismLauncher-Windows-MSVC-${latestVersion}.zip`,
+  },
+  {
+    dir: "PrismLauncher-Legacy",
+    filename: `PrismLauncher-Windows-MSVC-Legacy-${latestVersion}.zip`,
+  },
+  {
+    dir: "PrismLauncher-ARM64",
+    filename: `PrismLauncher-Windows-MSVC-arm64-${latestVersion}.zip`,
+  },
+];
+
+const gitignore = `
+*
+!.gitignore
+`.trimStart();
+
 if (updateAvailable || confirm("Redownload Prism Launcher?")) {
-  const urlBase = `https://github.com/PrismLauncher/PrismLauncher/releases/download/${version}`;
-  for (const [path, url] of [
-    [
-      "PrismLauncherPortable/App/PrismLauncher",
-      `${urlBase}/PrismLauncher-Windows-MSVC-${version}.zip`,
-    ],
-    [
-      "PrismLauncherPortable/App/PrismLauncherLegacy",
-      `${urlBase}/PrismLauncher-Windows-MSVC-Legacy-${version}.zip`,
-    ],
-  ]) {
-    console.log("Downloading", basename(url));
+  for (const download of downloads) {
+    const path = join(appPath, download.dir);
+    const url = `${urlBase}/${download.filename}`;
+
+    console.log("Downloading", download.filename);
     const zipReader = new ZipReader(new HttpReader(url));
     const entries = await zipReader.getEntries();
 
     await emptyDir(path);
-    await Deno.writeTextFile(
-      join(path, "whatgoeshere.txt"),
-      "This directory is where the PrismLauncher.exe would exist if we had one\n"
-    );
+    await Deno.writeTextFile(join(path, ".gitignore"), gitignore);
 
-    console.log("Extracting...");
     for (const entry of entries) {
       if (!entry.getData) continue;
       const uint8 = await entry.getData(new Uint8ArrayWriter());
@@ -78,6 +112,6 @@ console.log();
 console.log(
   `- ${
     updateAvailable ? "Update to" : "Still using"
-  } [Prism Launcher ${version}](https://github.com/PrismLauncher/PrismLauncher/releases/tag/${version})`
+  } [Prism Launcher ${latestVersion}](https://github.com/PrismLauncher/PrismLauncher/releases/tag/${latestVersion})`
 );
 alert("Done!");
