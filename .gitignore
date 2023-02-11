@@ -1,10 +1,6 @@
 PortableApps.comInstaller
 PortableApps.comLauncher
 
-PrismLauncherPortable/App/PrismLauncher/*
-!PrismLauncherPortable/App/PrismLauncher/whatgoeshere.txt
-PrismLauncherPortable/App/PrismLauncherLegacy/*
-!PrismLauncherPortable/App/PrismLauncherLegacy/whatgoeshere.txt
 PrismLauncherPortable/Optional1
 PrismLauncherPortable/Data
 
