@@ -102,10 +102,8 @@ if (updateAvailable || confirm("Redownload Prism Launcher?")) {
 console.log();
 
 if (updateAvailable || confirm("Create launcher and installer?")) {
-  const p = Deno.run({
-    cmd: ["./make.bat"],
-  });
-  await p.status();
+  const p = new Deno.Command("./make.bat");
+  await p.output();
 }
 console.log();
 
