@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { join } from "std/path/mod.ts";
 import { emptyDir } from "std/fs/mod.ts";
+import { grantOrThrow } from "std/permissions/mod.ts";
 
 import * as ini from "ini";
 import { ZipReader, HttpReader, Uint8ArrayWriter } from "zipjs";
@@ -26,6 +27,11 @@ const latestVersion = GitHubTags.parse(
 )[0].name;
 
 const appPath = join("PrismLauncherPortable", "App");
+await grantOrThrow(
+  { name: "read", path: appPath },
+  { name: "write", path: appPath }
+);
+
 const iniPath = join(appPath, "AppInfo", "appinfo.ini");
 const appinfo = <AppInfoIni>ini.parse(await Deno.readTextFile(iniPath));
 AppInfoIni.parse(appinfo);
