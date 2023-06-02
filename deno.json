@@ -1,8 +1,8 @@
 {
   "imports": {
-    "std/": "https://deno.land/std@0.176.0/",
-    "zod": "https://deno.land/x/zod@v3.20.2/mod.ts",
-    "ini": "https://esm.sh/ini@3.0.1",
-    "zipjs": "https://deno.land/x/zipjs@v2.6.62/index.js"
+    "std/": "https://deno.land/std@0.190.0/",
+    "zod": "https://deno.land/x/zod@v3.21.4/mod.ts",
+    "ini": "npm:ini@4.1.1",
+    "zipjs": "https://deno.land/x/zipjs@v2.7.14/index.js"
   }
 }
