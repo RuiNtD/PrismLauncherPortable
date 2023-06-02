@@ -1,4 +1,7 @@
 {
+  "tasks": {
+    "udd": "deno run -r --allow-read=. --allow-write=. --allow-net https://deno.land/x/udd/main.ts deno.json"
+  },
   "imports": {
     "std/": "https://deno.land/std@0.190.0/",
     "zod": "https://deno.land/x/zod@v3.21.4/mod.ts",
