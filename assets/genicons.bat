@@ -6,6 +6,10 @@ inkscape -w 128 -h 128 -o appicon_128.png org.prismlauncher.PrismLauncher.svg
 inkscape -w 256 -h 256 -o appicon_256.png org.prismlauncher.PrismLauncher.svg
 
 magick convert appicon_16.png appicon_32.png appicon_48.png appicon_256.png appicon.ico
-del appicon_48.png
 
+@echo off
+del appicon_48.png
+echo.
+
+move /Y appicon* ..\PrismLauncherPortable\App\AppInfo
 pause
