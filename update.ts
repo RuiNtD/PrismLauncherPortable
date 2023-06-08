@@ -51,7 +51,7 @@ appinfo.Version.DisplayVersion = latestVersion;
 appinfo.Version.PackageVersion = `${standardVersion}.${patchNum}`;
 console.log("New version:", appinfo.Version.PackageVersion);
 
-if (updateAvailable || confirm("Update appinfo.ini?")) {
+if (confirm("Update appinfo.ini?")) {
   await Deno.writeTextFile(iniPath, ini.stringify(appinfo));
   console.log("Updated appinfo.ini");
 }
