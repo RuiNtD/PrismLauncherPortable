@@ -4,7 +4,7 @@ import { join } from "std/path/mod.ts";
 import { emptyDir } from "std/fs/mod.ts";
 import { grantOrThrow } from "std/permissions/mod.ts";
 
-import * as ini from "ini";
+import ini from "ini";
 import { ZipReader, HttpReader, Uint8ArrayWriter } from "zipjs";
 
 const GitHubTag = z.object({

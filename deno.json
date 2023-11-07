@@ -3,9 +3,9 @@
     "udd": "deno run -r --allow-read=. --allow-write=. --allow-net https://deno.land/x/udd/main.ts deno.json"
   },
   "imports": {
-    "std/": "https://deno.land/std@0.190.0/",
-    "zod": "https://deno.land/x/zod@v3.21.4/mod.ts",
+    "std/": "https://deno.land/std@0.205.0/",
+    "zod": "https://deno.land/x/zod@v3.22.4/mod.ts",
     "ini": "npm:ini@4.1.1",
-    "zipjs": "https://deno.land/x/zipjs@v2.7.14/index.js"
+    "zipjs": "https://deno.land/x/zipjs@v2.7.30/index.js"
   }
 }
