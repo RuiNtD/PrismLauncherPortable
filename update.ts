@@ -69,7 +69,7 @@ const downloads: Download[] = [
     filename: `PrismLauncher-Windows-MSVC-${latestVersion}.zip`,
   },
   {
-    dir: "PrismLauncher-ARM64",
+    dir: "PrismLauncherARM64",
     filename: `PrismLauncher-Windows-MSVC-arm64-${latestVersion}.zip`,
   },
 ];
