@@ -1,14 +1,6 @@
 ${SegmentFile}
 
 ${SegmentPre}
-  ; Windows 7 Support
-
-  ReadRegStr $0 HKLM "Software\Microsoft\Windows NT\CurrentVersion" "CurrentBuild"
-
-  ${If} $0 < 10000
-    ${ReadLauncherConfig} $ProgramExecutable Launch ProgramExecutable
-  ${EndIf}
-
   ; ARM64 Support
 
   ReadRegStr $0 HKLM "HARDWARE\DESCRIPTION\System" "Identifier"
