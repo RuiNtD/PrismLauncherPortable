@@ -1,16 +1,14 @@
 import { z } from "zod";
-
-import { join } from "std/path/mod.ts";
-import { ensureDir } from "std/fs/mod.ts";
-import { grantOrThrow } from "std/permissions/mod.ts";
-
+import $ from "dax";
+import { grantOrThrow } from "permissions";
 import ini from "ini";
 import { ZipReader, HttpReader, Uint8ArrayWriter } from "zipjs";
 
-const GitHubTag = z.object({
-  name: z.string(),
+$.setPrintCommand(true);
+
+const GitHubRelease = z.object({
+  tag_name: z.string(),
 });
-const GitHubTags = GitHubTag.array();
 
 const AppInfoIni = z.object({
   Version: z.object({
@@ -20,20 +18,20 @@ const AppInfoIni = z.object({
 });
 type AppInfoIni = z.infer<typeof AppInfoIni>;
 
-const latestVersion = GitHubTags.parse(
-  await (
-    await fetch("https://api.github.com/repos/PrismLauncher/PrismLauncher/tags")
+const latestVersion = GitHubRelease.parse(
+  await $.request(
+    "https://api.github.com/repos/PrismLauncher/PrismLauncher/releases/latest"
   ).json()
-)[0].name;
+).tag_name;
 
-const appPath = join("PrismLauncherPortable", "App");
+const appPath = $.path("PrismLauncherPortable").join("App");
 await grantOrThrow(
-  { name: "read", path: appPath },
-  { name: "write", path: appPath }
+  { name: "read", path: appPath.toString() },
+  { name: "write", path: appPath.toString() }
 );
 
-const iniPath = join(appPath, "AppInfo", "appinfo.ini");
-const appinfo = <AppInfoIni>ini.parse(await Deno.readTextFile(iniPath));
+const iniPath = appPath.join("AppInfo", "appinfo.ini");
+const appinfo = <AppInfoIni>ini.parse(await iniPath.readText());
 AppInfoIni.parse(appinfo);
 
 const versionArray = appinfo.Version.PackageVersion.split(".");
@@ -43,15 +41,14 @@ const updateAvailable = currentVersion != latestVersion;
 const updateNum = updateAvailable ? 0 : parseInt(versionArray[2]) + 1;
 appinfo.Version.DisplayVersion = `${latestVersion} Update ${updateNum}`;
 appinfo.Version.PackageVersion = `${latestVersion}.${updateNum}.0`;
-console.log(
+$.log(
   `New version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
 );
 
-if (confirm("Update appinfo.ini?")) {
-  await Deno.writeTextFile(iniPath, ini.stringify(appinfo));
-  console.log("Updated appinfo.ini");
+if (await $.confirm("Update appinfo.ini?")) {
+  await iniPath.writeText(ini.stringify(appinfo));
+  $.logStep("Updated appinfo.ini");
 }
-console.log();
 
 type Download = {
   dir: string;
@@ -75,47 +72,49 @@ const gitignore = `
 !.gitignore
 `.trimStart();
 
-if (updateAvailable || confirm("Redownload Prism Launcher?")) {
-  for await (const entry of Deno.readDir(appPath)) {
+if (updateAvailable || (await $.confirm("Redownload Prism Launcher?"))) {
+  $.logLight("Downloading...");
+
+  for await (const entry of appPath.readDir()) {
     if (!entry.isDirectory) continue;
     if (entry.name == "AppInfo") continue;
 
-    const path = join(appPath, entry.name);
-    await Deno.remove(path, { recursive: true });
+    const path = appPath.join(entry.name);
+    await path.remove({ recursive: true });
   }
 
   for (const download of downloads) {
-    const path = join(appPath, download.dir);
+    const path = appPath.join(download.dir);
     const url = `${urlBase}/${download.filename}`;
 
     const zipReader = new ZipReader(new HttpReader(url));
     const entries = await zipReader.getEntries();
 
-    console.log("Downloaded", download.filename);
-    await ensureDir(path);
-    await Deno.writeTextFile(join(path, ".gitignore"), gitignore);
+    $.logStep("Downloaded", download.filename);
+    await path.ensureDir();
+    await path.join(".gitignore").writeText(gitignore);
 
     for (const entry of entries) {
       if (!entry.getData) continue;
       if (entry.filename == "prismlauncher_updater.exe") continue;
 
       const uint8 = await entry.getData(new Uint8ArrayWriter());
-      const filePath = join(path, entry.filename);
+      const filePath = path.join(entry.filename);
 
-      if (entry.directory) await Deno.mkdir(filePath);
-      else await Deno.writeFile(filePath, uint8);
+      if (entry.directory) await filePath.mkdir();
+      else await filePath.write(uint8);
     }
   }
 }
-console.log();
 
-if (updateAvailable || confirm("Create launcher and installer?")) {
-  const p = new Deno.Command("./make.bat");
-  await p.output();
+if (updateAvailable || (await $.confirm("Create launcher and installer?"))) {
+  $.logStep("Creating launcher");
+  await $`PortableApps.comLauncher/PortableApps.comLauncherGenerator.exe $PWD\\PrismLauncherPortable`;
+  $.logStep("Creating installer");
+  await $`PortableApps.comInstaller/PortableApps.comInstaller.exe $PWD\\PrismLauncherPortable`;
 }
-console.log();
 
-console.log(
+$.log(
   `- ${
     updateAvailable ? "Update to" : "Still using"
   } [Prism Launcher ${latestVersion}](https://github.com/PrismLauncher/PrismLauncher/releases/tag/${latestVersion})`
