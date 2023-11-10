@@ -25,6 +25,8 @@ const file =
 function formatSize(size: number): string {
   return formatBytes(size, {
     binary: true,
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
   })
     .replace(" ", "")
     .replace("i", "");
@@ -36,6 +38,11 @@ const hash = encodeHex(
 );
 
 const tempDir = $.path(await Deno.makeTempDir());
+for (const type of ["unload", "unhandledrejection"])
+  globalThis.addEventListener(type, () => {
+    tempDir.removeSync({ recursive: true });
+  });
+
 await $`${file} /DESTINATION=${tempDir}\\`;
 
 let tempSize = 0;
@@ -45,7 +52,6 @@ for await (const entry of tempDir.walk()) {
   tempSize += stat?.size || 0;
 }
 const installedSize = formatSize(tempSize);
-await tempDir.remove({ recursive: true });
 
 $.log(`[${downloadSize} download / ${installedSize} installed]
 (MD5: ${hash})`);
