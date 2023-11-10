@@ -93,6 +93,8 @@ if (updateAvailable || confirm("Redownload Prism Launcher?")) {
 
     for (const entry of entries) {
       if (!entry.getData) continue;
+      if (entry.filename == "prismlauncher_updater.exe") continue;
+
       const uint8 = await entry.getData(new Uint8ArrayWriter());
       const filePath = join(path, entry.filename);
 
