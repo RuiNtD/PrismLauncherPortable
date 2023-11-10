@@ -38,6 +38,9 @@ const versionArray = appinfo.Version.PackageVersion.split(".");
 const currentVersion = versionArray.slice(0, 2).join(".");
 const updateAvailable = currentVersion != latestVersion;
 
+$.log(
+  `Old version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
+);
 const updateNum = updateAvailable ? 0 : parseInt(versionArray[2]) + 1;
 appinfo.Version.DisplayVersion = `${latestVersion} Update ${updateNum}`;
 appinfo.Version.PackageVersion = `${latestVersion}.${updateNum}.0`;

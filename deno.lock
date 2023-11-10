@@ -287,6 +287,7 @@
     "https://deno.land/std@0.196.0/path/posix.ts": "8b7c67ac338714b30c816079303d0285dd24af6b284f7ad63da5b27372a2c94d",
     "https://deno.land/std@0.196.0/path/separator.ts": "0fb679739d0d1d7bf45b68dacfb4ec7563597a902edbaf3c59b50d5bcadd93b1",
     "https://deno.land/std@0.196.0/path/win32.ts": "4fca292f8d116fd6d62f243b8a61bd3d6835a9f0ede762ba5c01afe7c3c0aa12",
+    "https://deno.land/std@0.200.0/permissions/mod.ts#=": "9c879d5be6e3638fc36a0e855a8d0582cf9674cc68fb6775f4d3522d93127264",
     "https://deno.land/std@0.201.0/assert/assert.ts": "9a97dad6d98c238938e7540736b826440ad8c1c1e54430ca4c4e623e585607ee",
     "https://deno.land/std@0.201.0/assert/assertion_error.ts": "4d0bde9b374dfbcbe8ac23f54f567b77024fb67dbb1906a852d67fe050d42f56",
     "https://deno.land/std@0.201.0/bytes/copy.ts": "939d89e302a9761dcf1d9c937c7711174ed74c59eef40a1e4569a05c9de88219",
