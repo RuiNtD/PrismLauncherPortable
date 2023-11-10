@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { join } from "std/path/mod.ts";
-import { emptyDir } from "std/fs/mod.ts";
+import { ensureDir } from "std/fs/mod.ts";
 import { grantOrThrow } from "std/permissions/mod.ts";
 
 import ini from "ini";
@@ -36,20 +36,16 @@ const iniPath = join(appPath, "AppInfo", "appinfo.ini");
 const appinfo = <AppInfoIni>ini.parse(await Deno.readTextFile(iniPath));
 AppInfoIni.parse(appinfo);
 
-const standardVersion = latestVersion
-  .split(".")
-  .concat("0")
-  .slice(0, 3)
-  .join(".");
-const updateAvailable = appinfo.Version.DisplayVersion != latestVersion;
-const patchNum = updateAvailable
-  ? 0
-  : parseInt(
-      (appinfo.Version.PackageVersion as string).split(".").pop() as string
-    ) + 1;
-appinfo.Version.DisplayVersion = latestVersion;
-appinfo.Version.PackageVersion = `${standardVersion}.${patchNum}`;
-console.log("New version:", appinfo.Version.PackageVersion);
+const versionArray = appinfo.Version.PackageVersion.split(".");
+const currentVersion = versionArray.slice(0, 2).join(".");
+const updateAvailable = currentVersion != latestVersion;
+
+const updateNum = updateAvailable ? 0 : parseInt(versionArray[2]) + 1;
+appinfo.Version.DisplayVersion = `${latestVersion} Update ${updateNum}`;
+appinfo.Version.PackageVersion = `${latestVersion}.${updateNum}.0`;
+console.log(
+  `New version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
+);
 
 if (confirm("Update appinfo.ini?")) {
   await Deno.writeTextFile(iniPath, ini.stringify(appinfo));
@@ -80,15 +76,23 @@ const gitignore = `
 `.trimStart();
 
 if (updateAvailable || confirm("Redownload Prism Launcher?")) {
+  for await (const entry of Deno.readDir(appPath)) {
+    if (!entry.isDirectory) continue;
+    if (entry.name == "AppInfo") continue;
+
+    const path = join(appPath, entry.name);
+    await Deno.remove(path, { recursive: true });
+  }
+
   for (const download of downloads) {
     const path = join(appPath, download.dir);
     const url = `${urlBase}/${download.filename}`;
 
-    console.log("Downloading", download.filename);
     const zipReader = new ZipReader(new HttpReader(url));
     const entries = await zipReader.getEntries();
 
-    await emptyDir(path);
+    console.log("Downloaded", download.filename);
+    await ensureDir(path);
     await Deno.writeTextFile(join(path, ".gitignore"), gitignore);
 
     for (const entry of entries) {
