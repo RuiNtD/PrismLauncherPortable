@@ -25,6 +25,8 @@ const file =
 function formatSize(size: number): string {
   return formatBytes(size, {
     binary: true,
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
   })
     .replace(" ", "")
     .replace("i", "");
