@@ -9,4 +9,7 @@ PrismLauncherPortable/PrismLauncherPortable.exe
 PrismLauncherPortable/PrismLauncherPortable.ini
 PrismLauncherPortable/App/AppInfo/pac_installer_log.ini
 
+PrismLauncherPortable/App/*/
+!PrismLauncherPortable/App/AppInfo/
+
 PrismLauncherPortable/Other/Source/PortableApps.comInstaller*
