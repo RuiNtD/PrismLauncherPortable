@@ -1,13 +1,15 @@
 {
   "tasks": {
-    "udd": "deno run -r --allow-read=. --allow-write=. --allow-net https://deno.land/x/udd/main.ts deno.json"
+    "update": "deno run -A update.ts",
+    "fileinfo": "deno run -A fileinfo.ts"
   },
   "imports": {
-    "std/": "https://deno.land/std@0.206.0/",
-    "permissions": "https://deno.land/std@0.200.0/permissions/mod.ts#=",
-    "dax": "https://deno.land/x/dax@0.35.0/mod.ts",
-    "ini": "npm:ini@4.1.1",
-    "zipjs": "https://deno.land/x/zipjs@v2.7.30/index.js",
-    "zod": "https://deno.land/x/zod@v3.22.4/mod.ts"
+    "@david/dax": "jsr:@david/dax@^0.39.2",
+    "@std/crypto": "jsr:@std/crypto@^0.218.2",
+    "@std/encoding": "jsr:@std/encoding@^0.218.2",
+    "@std/fmt": "jsr:@std/fmt@^0.218.2",
+    "@std/ini": "jsr:@std/ini@^0.218.2",
+    "@zip-js/zip-js": "jsr:@zip-js/zip-js@^2.7.37",
+    "zod": "npm:zod@^3.22.4"
   }
 }

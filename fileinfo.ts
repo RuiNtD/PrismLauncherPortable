@@ -1,7 +1,7 @@
-import $ from "dax";
-import { format as formatBytes } from "std/fmt/bytes.ts";
-import { crypto } from "std/crypto/mod.ts";
-import { encodeHex } from "std/encoding/hex.ts";
+import $ from "@david/dax";
+import { format as formatBytes } from "@std/fmt/bytes";
+import { crypto } from "@std/crypto";
+import { encodeHex } from "@std/encoding/hex";
 
 $.setPrintCommand(true);
 
