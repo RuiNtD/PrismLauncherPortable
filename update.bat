@@ -1,1 +1,1 @@
-@deno run -A update.ts
+@deno task update

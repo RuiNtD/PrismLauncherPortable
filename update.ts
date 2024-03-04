@@ -1,8 +1,7 @@
 import { z } from "zod";
-import $ from "dax";
-import { grantOrThrow } from "permissions";
-import ini from "ini";
-import { ZipReader, HttpReader, Uint8ArrayWriter } from "zipjs";
+import $ from "@david/dax";
+import * as ini from "@std/ini";
+import { ZipReader, HttpReader, Uint8ArrayWriter } from "@zip-js/zip-js";
 
 $.setPrintCommand(true);
 
@@ -25,11 +24,6 @@ const latestVersion = GitHubRelease.parse(
 ).tag_name;
 
 const appPath = $.path("PrismLauncherPortable").join("App");
-await grantOrThrow(
-  { name: "read", path: appPath.toString() },
-  { name: "write", path: appPath.toString() }
-);
-
 const iniPath = appPath.join("AppInfo", "appinfo.ini");
 const appinfo = <AppInfoIni>ini.parse(await iniPath.readText());
 AppInfoIni.parse(appinfo);
@@ -42,14 +36,18 @@ $.log(
   `Old version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
 );
 const updateNum = updateAvailable ? 0 : parseInt(versionArray[2]) + 1;
-appinfo.Version.DisplayVersion = `${latestVersion} Update ${updateNum}`;
+appinfo.Version.DisplayVersion = latestVersion;
+if (updateNum > 0) appinfo.Version.DisplayVersion += ` Update ${updateNum}`;
 appinfo.Version.PackageVersion = `${latestVersion}.${updateNum}.0`;
 $.log(
   `New version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
 );
 
 if (await $.confirm("Update appinfo.ini?")) {
-  await iniPath.writeText(ini.stringify(appinfo));
+  await iniPath.writeText(
+    // @std/ini's stringify has some weeeeeird formatting
+    ini.stringify(appinfo).replaceAll(/\n\[/g, "\n\n[") + "\n"
+  );
   $.logStep("Updated appinfo.ini");
 }
 
@@ -69,11 +67,6 @@ const downloads: Download[] = [
     filename: `PrismLauncher-Windows-MSVC-arm64-${latestVersion}.zip`,
   },
 ];
-
-const gitignore = `
-*
-!.gitignore
-`.trimStart();
 
 if (updateAvailable || (await $.confirm("Redownload Prism Launcher?"))) {
   $.logLight("Downloading...");
@@ -95,7 +88,6 @@ if (updateAvailable || (await $.confirm("Redownload Prism Launcher?"))) {
 
     $.logStep("Downloaded", download.filename);
     await path.ensureDir();
-    await path.join(".gitignore").writeText(gitignore);
 
     for (const entry of entries) {
       if (!entry.getData) continue;
