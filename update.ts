@@ -46,7 +46,7 @@ $.log(
 if (await $.confirm("Update appinfo.ini?")) {
   await iniPath.writeText(
     // @std/ini's stringify has some weeeeeird formatting
-    ini.stringify(appinfo).replaceAll(/\n\[/g, "\n\n[") + "\n"
+    ini.stringify(appinfo).replaceAll("\n[", "\n\n[") + "\n"
   );
   $.logStep("Updated appinfo.ini");
 }
