@@ -1,15 +1,16 @@
 {
   "tasks": {
-    "update": "deno run -A update.ts",
-    "fileinfo": "deno run -A fileinfo.ts"
+    "start": "deno run -A src/main.ts",
+    "fileinfo": "deno run -A src/fileinfo.ts"
   },
   "imports": {
-    "@david/dax": "jsr:@david/dax@^0.39.2",
-    "@std/crypto": "jsr:@std/crypto@^0.218.2",
-    "@std/encoding": "jsr:@std/encoding@^0.218.2",
-    "@std/fmt": "jsr:@std/fmt@^0.218.2",
-    "@std/ini": "jsr:@std/ini@^0.218.2",
-    "@zip-js/zip-js": "jsr:@zip-js/zip-js@^2.7.37",
-    "zod": "npm:zod@^3.22.4"
+    "@david/dax": "jsr:@david/dax@^0.40.1",
+    "@std/crypto": "jsr:@std/crypto@^0.223.0",
+    "@std/dotenv": "jsr:@std/dotenv@^0.223.0",
+    "@std/encoding": "jsr:@std/encoding@^0.223.0",
+    "@std/fmt": "jsr:@std/fmt@^0.223.0",
+    "@std/ini": "jsr:@std/ini@^0.223.0",
+    "@zip-js/zip-js": "jsr:@zip-js/zip-js@^2.7.42",
+    "zod": "npm:zod@^3.23.4"
   }
 }

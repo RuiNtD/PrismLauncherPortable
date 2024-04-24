@@ -1,13 +1,12 @@
-import { z } from "zod";
+import z from "zod";
 import $ from "@david/dax";
 import * as ini from "@std/ini";
-import { ZipReader, HttpReader, Uint8ArrayWriter } from "@zip-js/zip-js";
+import { ZipReader, Uint8ArrayWriter } from "@zip-js/zip-js";
+import { getLatestPrism } from "./prism.ts";
+import { JavaVersion, getJavaRelease } from "./java.ts";
+import * as dotenv from "@std/dotenv";
 
 $.setPrintCommand(true);
-
-const GitHubRelease = z.object({
-  tag_name: z.string(),
-});
 
 const AppInfoIni = z.object({
   Version: z.object({
@@ -17,11 +16,7 @@ const AppInfoIni = z.object({
 });
 type AppInfoIni = z.infer<typeof AppInfoIni>;
 
-const latestVersion = GitHubRelease.parse(
-  await $.request(
-    "https://api.github.com/repos/PrismLauncher/PrismLauncher/releases/latest"
-  ).json()
-).tag_name;
+const latestVersion = (await getLatestPrism()).tag_name;
 
 const appPath = $.path("PrismLauncherPortable").join("App");
 const iniPath = appPath.join("AppInfo", "appinfo.ini");
@@ -32,7 +27,7 @@ const versionArray = appinfo.Version.PackageVersion.split(".");
 const currentVersion = versionArray.slice(0, 2).join(".");
 const updateAvailable = currentVersion != latestVersion;
 
-$.log(
+$.logLight(
   `Old version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
 );
 const updateNum = updateAvailable ? 0 : parseInt(versionArray[2]) + 1;
@@ -69,25 +64,14 @@ const downloads: Download[] = [
 ];
 
 if (updateAvailable || (await $.confirm("Redownload Prism Launcher?"))) {
-  $.logLight("Downloading...");
-
-  for await (const entry of appPath.readDir()) {
-    if (!entry.isDirectory) continue;
-    if (entry.name == "AppInfo") continue;
-
-    const path = appPath.join(entry.name);
-    await path.remove({ recursive: true });
-  }
-
   for (const download of downloads) {
     const path = appPath.join(download.dir);
     const url = `${urlBase}/${download.filename}`;
+    await path.emptyDir();
 
-    const zipReader = new ZipReader(new HttpReader(url));
+    const req = await $.request(url).showProgress({ noClear: true });
+    const zipReader = new ZipReader(req);
     const entries = await zipReader.getEntries();
-
-    $.logStep("Downloaded", download.filename);
-    await path.ensureDir();
 
     for (const entry of entries) {
       if (!entry.getData) continue;
@@ -96,11 +80,49 @@ if (updateAvailable || (await $.confirm("Redownload Prism Launcher?"))) {
       const uint8 = await entry.getData(new Uint8ArrayWriter());
       const filePath = path.join(entry.filename);
 
-      if (entry.directory) await filePath.mkdir();
+      if (entry.directory) await filePath.ensureDir();
       else await filePath.write(uint8);
     }
   }
 }
+
+async function getJavaVer(version: JavaVersion) {
+  const relFile = appPath.join(`jre${version}`, "release");
+  if (!(await relFile.exists())) return;
+
+  const data = dotenv.parse(await relFile.readText());
+  return { java: data.JAVA_VERSION, full: data.FULL_VERSION };
+}
+
+async function updateJava(version: JavaVersion) {
+  const jreDir = appPath.join(`jre${version}`);
+  const release = await getJavaRelease(version);
+  if (release.version.openjdk_version == (await getJavaVer(version))?.full) {
+    $.logLight(`Skipping Java ${version} (Already up to date)`);
+    return;
+  }
+  jreDir.emptyDir();
+
+  const url = release.binary.package.link;
+  const req = await $.request(url).showProgress({ noClear: true });
+  const zipReader = new ZipReader(req);
+  const entries = await zipReader.getEntries();
+
+  for (const entry of entries) {
+    if (!entry.getData) continue;
+
+    const uint8 = await entry.getData(new Uint8ArrayWriter());
+    const filename = entry.filename.split("/").slice(1).join("/");
+    const filePath = jreDir.join(filename);
+
+    if (entry.directory) await filePath.ensureDir();
+    else await filePath.write(uint8);
+  }
+}
+
+await updateJava(8);
+await updateJava(17);
+await updateJava(21);
 
 if (updateAvailable || (await $.confirm("Create launcher and installer?"))) {
   $.logStep("Creating launcher");
@@ -109,9 +131,19 @@ if (updateAvailable || (await $.confirm("Create launcher and installer?"))) {
   await $`PortableApps.comInstaller/PortableApps.comInstaller.exe $PWD\\PrismLauncherPortable`;
 }
 
+async function logJavaVersion(version: JavaVersion) {
+  const release = await getJavaRelease(version);
+  const vers = (await getJavaVer(version))?.java;
+  $.log(`- Includes [Java ${vers}](${release.release_link})`);
+}
+
+$.log();
 $.log(
-  `- ${
-    updateAvailable ? "Update to" : "Still using"
-  } [Prism Launcher ${latestVersion}](https://github.com/PrismLauncher/PrismLauncher/releases/tag/${latestVersion})`
+  `- Using [Prism Launcher ${latestVersion}](https://prismlauncher.org/news/release-${latestVersion})`
 );
+await logJavaVersion(8);
+await logJavaVersion(17);
+await logJavaVersion(21);
+$.log();
+
 alert("Done!");
