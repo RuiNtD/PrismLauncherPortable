@@ -1,7 +1,9 @@
 import z from "zod";
 import $ from "@david/dax";
+import memoize from "memoize";
 
-export type JavaVersion = 8 | 17 | 21;
+export const javaVersions = [8, 17, 21] as const;
+export type JavaVersion = (typeof javaVersions)[number];
 
 const Release = z.object({
   release_name: z.string(),
@@ -19,12 +21,7 @@ const Release = z.object({
 });
 type Release = z.infer<typeof Release>;
 
-const cache = new Map<JavaVersion, Release>();
-
-export async function getJavaRelease(version: JavaVersion): Promise<Release> {
-  const cached = cache.get(version);
-  if (cached) return cached;
-
+async function _getJavaRelease(version: JavaVersion): Promise<Release> {
   const params = new URLSearchParams({
     architecture: "x64",
     image_type: "jre",
@@ -32,10 +29,9 @@ export async function getJavaRelease(version: JavaVersion): Promise<Release> {
     vendor: "eclipse",
   });
   const url = `https://api.adoptium.net/v3/assets/latest/${version}/hotspot?${params}`;
-  const release = z.tuple([Release]).parse(await $.request(url).json())[0];
-  cache.set(version, release);
-  return release;
+  return z.tuple([Release]).parse(await $.request(url).json())[0];
 }
+export const getJavaRelease = memoize(_getJavaRelease);
 
 if (import.meta.main) {
   $.log(await getJavaRelease(21));

@@ -3,7 +3,7 @@ import $ from "@david/dax";
 import * as ini from "@std/ini";
 import { ZipReader, Uint8ArrayWriter } from "@zip-js/zip-js";
 import { getLatestPrism } from "./prism.ts";
-import { JavaVersion, getJavaRelease } from "./java.ts";
+import { JavaVersion, getJavaRelease, javaVersions } from "./java.ts";
 import * as dotenv from "@std/dotenv";
 
 $.setPrintCommand(true);
@@ -94,12 +94,12 @@ async function getJavaVer(version: JavaVersion) {
   return { java: data.JAVA_VERSION, full: data.FULL_VERSION };
 }
 
-async function updateJava(version: JavaVersion) {
+for (const version of javaVersions) {
   const jreDir = appPath.join(`jre${version}`);
   const release = await getJavaRelease(version);
   if (release.version.openjdk_version == (await getJavaVer(version))?.full) {
     $.logLight(`Skipping Java ${version} (Already up to date)`);
-    return;
+    continue;
   }
   jreDir.emptyDir();
 
@@ -120,10 +120,6 @@ async function updateJava(version: JavaVersion) {
   }
 }
 
-await updateJava(8);
-await updateJava(17);
-await updateJava(21);
-
 if (updateAvailable || (await $.confirm("Create launcher and installer?"))) {
   $.logStep("Creating launcher");
   await $`PortableApps.comLauncher/PortableApps.comLauncherGenerator.exe $PWD\\PrismLauncherPortable`;
@@ -131,19 +127,15 @@ if (updateAvailable || (await $.confirm("Create launcher and installer?"))) {
   await $`PortableApps.comInstaller/PortableApps.comInstaller.exe $PWD\\PrismLauncherPortable`;
 }
 
-async function logJavaVersion(version: JavaVersion) {
-  const release = await getJavaRelease(version);
-  const vers = (await getJavaVer(version))?.java;
-  $.log(`- Includes [Java ${vers}](${release.release_link})`);
-}
-
 $.log();
 $.log(
   `- Using [Prism Launcher ${latestVersion}](https://prismlauncher.org/news/release-${latestVersion})`
 );
-await logJavaVersion(8);
-await logJavaVersion(17);
-await logJavaVersion(21);
+for (const version of javaVersions) {
+  const release = await getJavaRelease(version);
+  const vers = (await getJavaVer(version))?.java;
+  $.log(`- Includes [Java ${vers}](${release.release_link})`);
+}
 $.log();
 
 alert("Done!");

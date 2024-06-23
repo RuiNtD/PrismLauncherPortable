@@ -11,6 +11,7 @@
     "@std/fmt": "jsr:@std/fmt@^0.223.0",
     "@std/ini": "jsr:@std/ini@^0.223.0",
     "@zip-js/zip-js": "jsr:@zip-js/zip-js@^2.7.42",
+    "memoize": "npm:memoize@^10.0.0",
     "zod": "npm:zod@^3.23.4"
   }
 }
