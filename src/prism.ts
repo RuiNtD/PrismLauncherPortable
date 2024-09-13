@@ -1,5 +1,4 @@
 import z from "zod";
-import $ from "@david/dax";
 
 const GHAsset = z.object({
   name: z.string(),
@@ -21,10 +20,11 @@ export async function getLatestPrism(): Promise<GHRelease> {
 
   const url =
     "https://api.github.com/repos/PrismLauncher/PrismLauncher/releases/latest";
-  cache = GHRelease.parse(await $.request(url).json());
+  const resp = await fetch(url);
+  cache = GHRelease.parse(await resp.json());
   return cache;
 }
 
 if (import.meta.main) {
-  $.log(await getLatestPrism());
+  console.log(await getLatestPrism());
 }

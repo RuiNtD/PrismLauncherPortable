@@ -1,1 +1,1 @@
-@deno task start
+@bun start
