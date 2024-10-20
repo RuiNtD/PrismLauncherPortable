@@ -71,6 +71,8 @@ if (updateAvailable || confirm("Redownload Prism Launcher?")) {
     });
   }
 
+  console.log("Downloading...");
+
   for (const download of downloads) {
     const path = join(appPath, download.dir);
     const url = `${urlBase}/${download.filename}`;
