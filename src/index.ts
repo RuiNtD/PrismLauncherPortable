@@ -53,11 +53,11 @@ const urlBase = `https://github.com/PrismLauncher/PrismLauncher/releases/downloa
 const downloads: Download[] = [
   {
     dir: "PrismLauncher",
-    filename: `PrismLauncher-Windows-MSVC-${latestVersion}.zip`,
+    filename: `PrismLauncher-Windows-MinGW-w64-Portable-${latestVersion}.zip`,
   },
   {
     dir: "PrismLauncherARM64",
-    filename: `PrismLauncher-Windows-MSVC-arm64-${latestVersion}.zip`,
+    filename: `PrismLauncher-Windows-MSVC-arm64-Portable-${latestVersion}.zip`,
   },
 ];
 
