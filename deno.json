@@ -1,0 +1,17 @@
+{
+  "tasks": {
+    "start": "deno run -A src/index.ts",
+    "fileinfo": "deno run -A src/fileinfo.ts"
+  },
+  "imports": {
+    "@david/dax": "jsr:@david/dax@^0.42.0",
+    "@std/crypto": "jsr:@std/crypto@^1.0.3",
+    "@std/encoding": "jsr:@std/encoding@^1.0.6",
+    "@std/fmt": "jsr:@std/fmt@^1.0.4",
+    "@std/fs": "jsr:@std/fs@^1.0.9",
+    "@valibot/valibot": "jsr:@valibot/valibot@^0.42.1",
+    "@zip-js/zip-js": "jsr:@zip-js/zip-js@^2.7.54",
+    "ini": "npm:ini@^5.0.0",
+    "memoize": "npm:memoize@^10.0.0"
+  }
+}

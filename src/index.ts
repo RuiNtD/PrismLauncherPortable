@@ -1,33 +1,31 @@
-import { $ } from "bun";
-import z from "zod";
+import $ from "@david/dax";
+import * as v from "@valibot/valibot";
 import * as ini from "ini";
-import { ZipReader, Uint8ArrayWriter } from "@zip.js/zip.js";
+import { ZipReader, Uint8ArrayWriter } from "@zip-js/zip-js";
 import { getLatestPrism } from "./prism.ts";
-import * as fs from "node:fs/promises";
-import path, { join } from "node:path";
-import chalk from "chalk";
+import { gray, green } from "@std/fmt/colors";
 
-const AppInfoIni = z.object({
-  Version: z.object({
-    PackageVersion: z.string(),
-    DisplayVersion: z.string(),
+const AppInfoIni = v.object({
+  Version: v.object({
+    PackageVersion: v.string(),
+    DisplayVersion: v.string(),
   }),
 });
-type AppInfoIni = z.infer<typeof AppInfoIni>;
+type AppInfoIni = v.InferOutput<typeof AppInfoIni>;
 
 const latestVersion = (await getLatestPrism()).tag_name;
 
-const appPath = join("PrismLauncherPortable", "App");
-const iniPath = join(appPath, "AppInfo", "appinfo.ini");
-const appinfo = <AppInfoIni>ini.parse(await Bun.file(iniPath).text());
-AppInfoIni.parse(appinfo);
+const appPath = $.path("PrismLauncherPortable/App");
+const iniPath = appPath.join("AppInfo/appinfo.ini");
+const appinfo = <AppInfoIni>ini.parse(await iniPath.readText());
+v.parse(AppInfoIni, appinfo);
 
 const versionArray = appinfo.Version.PackageVersion.split(".");
 const currentVersion = versionArray.slice(0, 2).join(".");
 const updateAvailable = currentVersion != latestVersion;
 
-console.log(
-  chalk.gray(
+$.log(
+  gray(
     `Old version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
   )
 );
@@ -35,13 +33,13 @@ const updateNum = updateAvailable ? 0 : parseInt(versionArray[2]) + 1;
 appinfo.Version.DisplayVersion = latestVersion;
 if (updateNum > 0) appinfo.Version.DisplayVersion += ` Update ${updateNum}`;
 appinfo.Version.PackageVersion = `${latestVersion}.${updateNum}.0`;
-console.log(
+$.log(
   `New version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
 );
 
 if (confirm("Update appinfo.ini?")) {
-  Bun.write(iniPath, ini.stringify(appinfo));
-  console.log(chalk.green("Updated appinfo.ini"));
+  await iniPath.writeText(ini.stringify(appinfo));
+  $.log(green("Updated appinfo.ini"));
 }
 
 type Download = {
@@ -62,21 +60,19 @@ const downloads: Download[] = [
 ];
 
 if (updateAvailable || confirm("Redownload Prism Launcher?")) {
-  for (const file of await fs.readdir(appPath, { withFileTypes: true })) {
-    if (!file.isDirectory()) continue;
+  for await (const file of appPath.readDir()) {
+    if (!file.isDirectory) continue;
     if (file.name == "AppInfo") continue;
-    await fs.rm(join(file.parentPath, file.name), {
-      recursive: true,
-      force: true,
-    });
+
+    await file.path.remove({ recursive: true });
   }
 
-  console.log("Downloading...");
+  $.log("Downloading...");
 
   for (const download of downloads) {
-    const path = join(appPath, download.dir);
+    const path = appPath.join(download.dir);
     const url = `${urlBase}/${download.filename}`;
-    await fs.mkdir(path, { recursive: true });
+    await path.mkdir({ recursive: true });
 
     const { body: resp } = await fetch(url);
     if (!resp) throw new Error(`Failed to download ${url}`);
@@ -88,26 +84,26 @@ if (updateAvailable || confirm("Redownload Prism Launcher?")) {
       if (entry.filename == "prismlauncher_updater.exe") continue;
 
       const uint8 = await entry.getData(new Uint8ArrayWriter());
-      const filePath = join(path, entry.filename);
+      const filePath = path.join(entry.filename);
 
-      if (entry.directory) await fs.mkdir(filePath);
-      else await Bun.write(filePath, uint8);
+      if (entry.directory) await filePath.mkdir();
+      else await filePath.write(uint8);
     }
   }
 }
 
 if (updateAvailable || confirm("Create launcher and installer?")) {
-  const dir = path.resolve("./PrismLauncherPortable");
-  console.log(chalk.green("Creating launcher"));
+  const dir = $.path("./PrismLauncherPortable").resolve();
+  $.log(green("Creating launcher"));
   await $`./PortableApps.comLauncher/PortableApps.comLauncherGenerator.exe ${dir}`;
-  console.log(chalk.green("Creating installer"));
+  $.log(green("Creating installer"));
   await $`./PortableApps.comInstaller/PortableApps.comInstaller.exe ${dir}`;
 }
 
-console.log();
-console.log(
+$.log();
+$.log(
   `- Using [Prism Launcher ${latestVersion}](https://prismlauncher.org/news/release-${latestVersion})`
 );
-console.log();
+$.log();
 
 alert("Done!");
