@@ -1,6 +1,6 @@
 import $ from "@david/dax";
 import { ZipReader, Uint8ArrayWriter, BlobReader } from "@zip-js/zip-js";
-import { appPath } from "./const.ts";
+import { appPath, repo } from "./const.ts";
 import { readAppInfo } from "./appinfo.ts";
 
 interface Download {
@@ -12,6 +12,7 @@ async function cleanPrism() {
   for await (const file of appPath.readDir()) {
     if (!file.isDirectory) continue;
     if (file.name == "AppInfo") continue;
+    if (file.name == "DefaultData") continue;
 
     await file.path.remove({ recursive: true });
   }
@@ -47,7 +48,7 @@ async function downloadPrism(download: Download) {
 export async function redownloadPrism(version: string) {
   await cleanPrism();
 
-  const urlBase = `https://github.com/PrismLauncher/PrismLauncher/releases/download/${version}`;
+  const urlBase = `https://github.com/${repo}/releases/download/${version}`;
   const downloads: Download[] = [
     {
       dir: "PrismLauncher",
@@ -55,7 +56,7 @@ export async function redownloadPrism(version: string) {
     },
     {
       dir: "PrismLauncherARM64",
-      url: `${urlBase}/PrismLauncher-Windows-MSVC-arm64-Portable-${version}.zip`,
+      url: `${urlBase}/PrismLauncher-Windows-MinGW-arm64-Portable-${version}.zip`,
     },
   ];
 
@@ -79,7 +80,7 @@ export async function buildInstaller() {
 if (import.meta.main) {
   const appinfo = await readAppInfo();
   const verParts = appinfo.Version.PackageVersion.split(".");
-  const version = verParts.slice(0, 2).join(".");
+  const version = verParts.slice(0, 3).join(".");
 
   $.logStep(`Downloading Prism Launcher ${version}...`);
   await redownloadPrism(version);

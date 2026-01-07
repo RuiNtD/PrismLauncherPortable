@@ -1,4 +1,5 @@
 import * as v from "@valibot/valibot";
+import { repo } from "./const.ts";
 
 const GHAsset = v.object({
   name: v.string(),
@@ -18,8 +19,7 @@ let cache: GHRelease | undefined;
 export async function getLatestPrism(): Promise<GHRelease> {
   if (cache) return cache;
 
-  const url =
-    "https://api.github.com/repos/PrismLauncher/PrismLauncher/releases/latest";
+  const url = `https://api.github.com/repos/${repo}/releases/latest`;
   const resp = await fetch(url);
   cache = v.parse(GHRelease, await resp.json());
   return cache;

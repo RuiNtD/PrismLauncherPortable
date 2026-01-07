@@ -7,18 +7,18 @@ const latestVersion = (await getLatestPrism()).tag_name;
 
 const appinfo = await readAppInfo();
 const verParts = appinfo.Version.PackageVersion.split(".");
-const currentVersion = verParts.slice(0, 2).join(".");
+const currentVersion = verParts.slice(0, 3).join(".");
 const updateAvailable = currentVersion != latestVersion;
 
 $.logLight(
-  `Old version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
+  `Old version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`,
 );
-const updateNum = updateAvailable ? 0 : parseInt(verParts[2]) + 1;
+const updateNum = updateAvailable ? 0 : parseInt(verParts[3]) + 1;
 appinfo.Version.DisplayVersion = latestVersion;
 if (updateNum > 0) appinfo.Version.DisplayVersion += ` Update ${updateNum}`;
-appinfo.Version.PackageVersion = `${latestVersion}.${updateNum}.0`;
+appinfo.Version.PackageVersion = `${latestVersion}.${updateNum}`;
 $.log(
-  `New version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`
+  `New version: ${appinfo.Version.DisplayVersion} (${appinfo.Version.PackageVersion})`,
 );
 
 if (await $.confirm("Update appinfo.ini?")) {
@@ -38,7 +38,7 @@ if (updateAvailable || (await $.confirm("Build launcher and installer?"))) {
 
 $.log();
 $.log(
-  `- Using [Prism Launcher ${latestVersion}](https://prismlauncher.org/news/release-${latestVersion})`
+  `- Using [Prism Launcher ${latestVersion}](https://prismlauncher.org/news/release-${latestVersion})`,
 );
 $.log();
 
