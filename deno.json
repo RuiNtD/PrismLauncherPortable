@@ -2,14 +2,19 @@
   "tasks": {
     "build": "deno run -A src/build.ts",
     "update": "deno run -A src/update.ts",
-    "fileinfo": "deno run -A src/fileinfo.ts"
+    "fileinfo": "deno run -A src/fileinfo.ts",
+    "tasks": "deno run -A src/icons.ts"
   },
   "imports": {
     "@david/dax": "jsr:@david/dax@^0.42.0",
+    "@octokit/rest": "npm:@octokit/rest@^22.0.1",
+    "@std/assert": "jsr:@std/assert@^1.0.18",
+    "@std/cli": "jsr:@std/cli@^1.0.27",
     "@std/crypto": "jsr:@std/crypto@^1.0.4",
     "@std/encoding": "jsr:@std/encoding@^1.0.8",
     "@std/fmt": "jsr:@std/fmt@^1.0.6",
     "@std/fs": "jsr:@std/fs@^1.0.15",
+    "@std/semver": "jsr:@std/semver@^1.0.8",
     "@valibot/valibot": "jsr:@valibot/valibot@^1.0.0",
     "@zip-js/zip-js": "jsr:@zip-js/zip-js@^2.7.60",
     "ini": "npm:ini@^5.0.0",

@@ -1,11 +1,13 @@
 import $ from "@david/dax";
 import { ZipReader, Uint8ArrayWriter, BlobReader } from "@zip-js/zip-js";
-import { appPath, repo } from "./const.ts";
+import { appPath } from "./const.ts";
 import { readAppInfo } from "./appinfo.ts";
+import { getLatestPrism, GHRelease } from "./prism.ts";
+import { assert } from "@std/assert";
 
 interface Download {
   dir: string;
-  url: string;
+  file: RegExp;
 }
 
 async function cleanPrism() {
@@ -18,9 +20,8 @@ async function cleanPrism() {
   }
 }
 
-async function downloadPrism(download: Download) {
-  const path = appPath.join(download.dir);
-  const { url } = download;
+async function downloadPrism(dir: string, url: string) {
+  const path = appPath.join(dir);
 
   await path.ensureRemove();
   await path.mkdir({ recursive: true });
@@ -45,22 +46,27 @@ async function downloadPrism(download: Download) {
   });
 }
 
-export async function redownloadPrism(version: string) {
+export async function redownloadPrism(release: GHRelease) {
   await cleanPrism();
 
-  const urlBase = `https://github.com/${repo}/releases/download/${version}`;
   const downloads: Download[] = [
     {
       dir: "PrismLauncher",
-      url: `${urlBase}/PrismLauncher-Windows-MinGW-w64-Portable-${version}.zip`,
+      file: /Windows-MinGW-w64-Portable/,
     },
     {
       dir: "PrismLauncherARM64",
-      url: `${urlBase}/PrismLauncher-Windows-MinGW-arm64-Portable-${version}.zip`,
+      file: /Windows-MinGW-arm64-Portable/,
     },
   ];
 
-  for (const download of downloads) await downloadPrism(download);
+  for (const download of downloads) {
+    const asset = release.assets.find((asset) =>
+      download.file.test(asset.name),
+    );
+    assert(asset);
+    await downloadPrism(download.dir, asset.browser_download_url);
+  }
 }
 
 export async function buildLauncher() {
@@ -83,7 +89,8 @@ if (import.meta.main) {
   const version = verParts.slice(0, 3).join(".");
 
   $.logStep(`Downloading Prism Launcher ${version}...`);
-  await redownloadPrism(version);
+  const release = await getLatestPrism();
+  await redownloadPrism(release);
 
   await buildLauncher();
   await buildInstaller();

@@ -1,30 +1,40 @@
-import * as v from "@valibot/valibot";
-import { repo } from "./const.ts";
+import { Octokit, RestEndpointMethodTypes } from "@octokit/rest";
 
-const GHAsset = v.object({
-  name: v.string(),
-  size: v.number(),
-  browser_download_url: v.pipe(v.string(), v.url()),
-});
+const octokit = new Octokit();
 
-const GHRelease = v.object({
-  name: v.string(),
-  tag_name: v.string(),
-  assets: v.array(GHAsset),
-});
-type GHRelease = v.InferOutput<typeof GHRelease>;
+export type GHRelease =
+  RestEndpointMethodTypes["repos"]["listReleases"]["response"]["data"][0];
 
 let cache: GHRelease | undefined;
+let preCache: GHRelease | undefined;
 
-export async function getLatestPrism(): Promise<GHRelease> {
-  if (cache) return cache;
-
-  const url = `https://api.github.com/repos/${repo}/releases/latest`;
-  const resp = await fetch(url);
-  cache = v.parse(GHRelease, await resp.json());
-  return cache;
+export async function getLatestPrism(prerelease = false): Promise<GHRelease> {
+  if (!prerelease) {
+    if (cache) return cache;
+    const { data: release } = await octokit.rest.repos.getLatestRelease({
+      owner: "PrismLauncher",
+      repo: "PrismLauncher",
+    });
+    cache = release;
+    return release;
+  } else {
+    if (preCache) return preCache;
+    const { data: releases } = await octokit.rest.repos.listReleases({
+      owner: "PrismLauncher",
+      repo: "PrismLauncher",
+      per_page: 1,
+    });
+    const release = releases[0];
+    preCache = release;
+    return release;
+  }
 }
 
 if (import.meta.main) {
-  console.log(await getLatestPrism());
+  const latest = await getLatestPrism();
+  const pre = await getLatestPrism(true);
+  console.log(latest.name);
+  console.log(pre.name);
+
+  console.log(latest.assets.map((v) => v.name).join("\n"));
 }
