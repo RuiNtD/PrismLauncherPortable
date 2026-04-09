@@ -3,7 +3,7 @@
     "build": "deno run -A src/build.ts",
     "update": "deno run -A src/update.ts",
     "fileinfo": "deno run -A src/fileinfo.ts",
-    "tasks": "deno run -A src/icons.ts"
+    "icons": "deno run -A src/icons.ts"
   },
   "imports": {
     "@david/dax": "jsr:@david/dax@^0.42.0",
